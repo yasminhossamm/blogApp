@@ -1,0 +1,48 @@
+<h1>All Posts</h1>
+
+<% @posts.each do |post| %>
+  <div>
+    <h2><%= link_to post.title, post_path(post) %></h2>
+    <p>by <%= post.user.name %></p>
+    <p><%= truncate(post.body, length: 100) %></p>
+    <p><strong>Tags:</strong> <%= post.tags.map(&:name).join(', ') %></p>
+
+    <!-- Display edit and delete options only if the current user is the author -->
+    <% if post.user == current_user %>
+      <%= link_to 'Edit', edit_post_path(post) %> |
+      <%= link_to 'Delete', post_path(post), method: :delete, data: { confirm: 'Are you sure?' } %>
+
+    <% end %>
+    
+    <h4>Comments:</h4>
+    <ul>
+      <% post.comments.each do |comment| %>
+        <li>
+          <p><%= comment.body %></p>
+          <p><small>by <%= comment.user.name %></small></p>
+
+          <!-- Display edit and delete options only if the current user is the author of the comment -->
+          <% if comment.user == current_user %>
+            <%= link_to 'Edit', edit_post_comment_path(post, comment) %> |
+            <%= link_to 'Delete', post_comment_path(post, comment), method: :delete, data: { confirm: 'Are you sure?' } %>
+
+          <% end %>
+          
+        </li>
+      <% end %>
+    </ul>
+
+    <!-- Form to add a new comment -->
+    <%= form_with model: [post, post.comments.build], local: true do |form| %>
+      <div>
+        <%= form.label :body, "Add a comment:" %>
+        <%= form.text_area :body, rows: 3 %>
+      </div>
+      <%= form.submit "Post Comment" %>
+    <% end %>
+  </div>
+  <hr>
+<% end %>
+
+<!-- Link to create a new post, only if the user is signed in -->
+<%= link_to "Create New Post", new_post_path if user_signed_in? %>

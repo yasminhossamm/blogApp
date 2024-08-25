@@ -1,0 +1,7 @@
+<h1>Welcome to the Homepage</h1>
+
+<% if user_signed_in? %>
+  <p><%= link_to "View All Posts", posts_path %></p>
+<% else %>
+  <p>Please <%= link_to "Sign Up", new_registration_path %> or <%= link_to "Log In", new_session_path %></p>
+<% end %>
